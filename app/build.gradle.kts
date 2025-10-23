@@ -1,3 +1,13 @@
+import java.util.Properties
+import java.io.FileInputStream
+
+val localProperties = Properties().apply {
+    val localPropsFile = rootProject.file("local.properties")
+    if (localPropsFile.exists()) {
+        load(FileInputStream(localPropsFile))
+    }
+}
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -8,6 +18,11 @@ android {
     namespace = "com.pulz.moviedeck"
     compileSdk = 36
 
+    buildFeatures {
+        buildConfig = true
+        compose = true
+    }
+
     defaultConfig {
         applicationId = "com.pulz.moviedeck"
         minSdk = 24
@@ -16,6 +31,21 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Api Key, busca do local.properties (Deve ser Inserido manualmente)
+        buildConfigField(
+            "String",
+            "OMDB_API_KEY",
+            "\"${localProperties.getProperty("OMDB_API_KEY", "")}\""
+        )
+
+        // URL base da OMDb API
+        buildConfigField(
+            "String",
+            "OMDB_BASE_URL",
+            "\"https://www.omdbapi.com/\""
+        )
+
     }
 
     buildTypes {
@@ -33,9 +63,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
-    }
-    buildFeatures {
-        compose = true
     }
 }
 
