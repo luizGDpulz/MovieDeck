@@ -4,12 +4,15 @@ import com.pulz.moviedeck.BuildConfig
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+/**
+ * Singleton Retrofit para consumir a MovieApi.
+ */
 object RetrofitClient {
-    val api: OmdbService by lazy {
+    val api: MovieApi by lazy {
         Retrofit.Builder()
             .baseUrl(BuildConfig.OMDB_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(OmdbService::class.java)
+            .create(MovieApi::class.java)
     }
 }

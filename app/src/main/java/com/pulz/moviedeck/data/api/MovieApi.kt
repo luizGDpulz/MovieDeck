@@ -5,7 +5,18 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface OmdbService {
+/**
+ * Interface principal para consumo da OMDb API.
+ */
+interface MovieApi {
+
+    /**
+     * Busca filmes pela API.
+     *
+     * @param apiKey Chave da OMDb API.
+     * @param searchQuery Termo de busca (ex: "batman").
+     * @return Response contendo MovieResponse (lista de filmes e metadados).
+     */
     @GET("/")
     suspend fun searchMovies(
         @Query("apikey") apiKey: String,
