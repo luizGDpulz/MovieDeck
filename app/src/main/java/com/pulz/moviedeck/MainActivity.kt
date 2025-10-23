@@ -4,29 +4,52 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pulz.moviedeck.ui.theme.MovieDeckTheme
-import android.util.Log
-import com.pulz.moviedeck.BuildConfig
+import com.pulz.moviedeck.viewmodel.MovieViewModel
+import com.pulz.moviedeck.data.model.*
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        Log.d("MovieDeck", "OMDb API Key: ${BuildConfig.OMDB_API_KEY}")
-        Log.d("MovieDeck", "OMDb URL Base: ${BuildConfig.OMDB_BASE_URL}")
         setContent {
             MovieDeckTheme {
+                val movieViewModel: MovieViewModel = viewModel()
+                val movies by movieViewModel.movies.collectAsState()
+                val error by movieViewModel.errorMessage.collectAsState()
+
+                // Faz a chamada uma vez ao iniciar
+                LaunchedEffect(Unit) {
+                    movieViewModel.testOmdbApi()
+                }
+
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "MovieDeck",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = "🎬 MovieDeck",
+                            style = MaterialTheme.typography.headlineMedium
+                        )
+                        Spacer(Modifier.height(16.dp))
+
+                        when {
+                            error != null -> Text("Erro: $error", color = MaterialTheme.colorScheme.error)
+                            movies.isEmpty() -> Text("Carregando filmes...")
+                            else -> MovieList(movies)
+                        }
+                    }
                 }
             }
         }
@@ -34,9 +57,18 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello ${BuildConfig.OMDB_API_KEY}!",
-        modifier = modifier
-    )
+fun MovieList(movies: List<MovieItem>) {
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        items(movies) { movie ->
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
+                Column(Modifier.padding(16.dp)) {
+                    Text(text = movie.title ?: "Sem título", style = MaterialTheme.typography.titleMedium)
+                    Text(text = movie.year ?: "Ano desconhecido", style = MaterialTheme.typography.bodyMedium)
+                }
+            }
+        }
+    }
 }
