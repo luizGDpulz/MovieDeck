@@ -8,7 +8,7 @@ import retrofit2.http.Query
 /**
  * Interface principal para consumo da OMDb API.
  */
-interface MovieApi {
+interface OmdbApi {
 
     /**
      * Busca filmes pela API.

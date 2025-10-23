@@ -12,9 +12,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.pulz.moviedeck.data.api.RetrofitClient
+import com.pulz.moviedeck.data.model.MovieItem
+import com.pulz.moviedeck.data.repository.MovieRepository
 import com.pulz.moviedeck.ui.theme.MovieDeckTheme
 import com.pulz.moviedeck.viewmodel.MovieViewModel
-import com.pulz.moviedeck.data.model.*
+import com.pulz.moviedeck.viewmodel.MovieViewModelFactory
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,13 +25,16 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MovieDeckTheme {
-                val movieViewModel: MovieViewModel = viewModel()
+                val repository = MovieRepository(RetrofitClient.api)
+                val factory = MovieViewModelFactory(repository)
+                val movieViewModel: MovieViewModel = viewModel(factory = factory)
+
                 val movies by movieViewModel.movies.collectAsState()
                 val error by movieViewModel.errorMessage.collectAsState()
 
-                // Faz a chamada uma vez ao iniciar
+                // Faz a chamada ao iniciar
                 LaunchedEffect(Unit) {
-                    movieViewModel.testOmdbApi()
+                    movieViewModel.searchMovies("star wars")
                 }
 
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->

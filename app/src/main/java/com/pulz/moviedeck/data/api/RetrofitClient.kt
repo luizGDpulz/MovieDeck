@@ -5,14 +5,14 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 /**
- * Singleton Retrofit para consumir a MovieApi.
+ * Singleton Retrofit para consumir a OmdbApi.
  */
 object RetrofitClient {
-    val api: MovieApi by lazy {
+    val api: OmdbApi by lazy {
         Retrofit.Builder()
             .baseUrl(BuildConfig.OMDB_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(MovieApi::class.java)
+            .create(OmdbApi::class.java)
     }
 }
