@@ -65,6 +65,7 @@ fun MovieList(movies: List<MovieItem>) {
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
                 Column(Modifier.padding(16.dp)) {
+                    Text(text = movie.imdbID ?: "Sem ID", style = MaterialTheme.typography.titleLarge)
                     Text(text = movie.title ?: "Sem título", style = MaterialTheme.typography.titleMedium)
                     Text(text = movie.year ?: "Ano desconhecido", style = MaterialTheme.typography.bodyMedium)
                 }
