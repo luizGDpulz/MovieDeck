@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -51,8 +52,22 @@ class MainActivity : ComponentActivity() {
                         Spacer(Modifier.height(16.dp))
 
                         when {
-                            error != null -> Text("Erro: $error", color = MaterialTheme.colorScheme.error)
-                            movies.isEmpty() -> Text("Carregando filmes...")
+                            error != null -> {
+                                Column {
+                                    Text("Erro: $error", color = MaterialTheme.colorScheme.error)
+                                    Spacer(Modifier.height(8.dp))
+                                    Button(onClick = { movieViewModel.searchMovies("star wars") }) {
+                                        Text("Tentar novamente")
+                                    }
+                                }
+                            }
+                            movies.isEmpty() -> {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    CircularProgressIndicator()
+                                    Spacer(Modifier.height(8.dp))
+                                    Text("Carregando filmes...")
+                                }
+                            }
                             else -> MovieList(movies)
                         }
                     }
