@@ -1,18 +1,21 @@
 package com.pulz.moviedeck.data.repository
 
 import android.util.Log
+import com.pulz.moviedeck.BuildConfig
 import com.pulz.moviedeck.data.api.OmdbApi
+import com.pulz.moviedeck.data.model.MovieItem
 import com.pulz.moviedeck.data.model.MovieResponse
 import retrofit2.HttpException
 import java.io.IOException
 
+/**
+ * Repositório que centraliza o acesso à OMDb API.
+ * Gerencia busca e detalhes de filmes, com tratamento de erros padronizado via ApiResult.
+ */
 class MovieRepository(private val api: OmdbApi) {
+
     /**
-     * Faz a busca e mapeia os possíveis erros em ApiResult.
-     * Busca filmes usando a OMDb API.
-     * @param apiKey Chave da OMDb API.
-     * @param query Termo de pesquisa.
-     * @return Response<MovieResponse> ou null em caso de falha.
+     * Faz a busca de filmes por título.
      */
     suspend fun searchMovies(apiKey: String, query: String): ApiResult<MovieResponse> {
         return try {
@@ -29,7 +32,7 @@ class MovieRepository(private val api: OmdbApi) {
                 return ApiResult.UnknownError("Resposta vazia da API")
             }
 
-            // A OMDb pode retornar HTTP 200 mas com Response = "False"
+            // A OMDb pode retornar HTTP 200 mas Response = "False"
             if (body.response?.equals("False", ignoreCase = true) == true) {
                 val apiMsg = body.error ?: "Nenhum resultado encontrado."
                 Log.e("MovieDeck", "API returned Response=false: $apiMsg")
@@ -38,7 +41,6 @@ class MovieRepository(private val api: OmdbApi) {
 
             ApiResult.Success(body)
         } catch (e: IOException) {
-            // Sem internet / timeout
             Log.e("MovieDeck", "Erro de rede: ${e.localizedMessage}")
             ApiResult.NetworkError
         } catch (e: HttpException) {
@@ -46,6 +48,37 @@ class MovieRepository(private val api: OmdbApi) {
             ApiResult.HttpError(e.code(), e.message())
         } catch (e: Exception) {
             Log.e("MovieDeck", "Erro inesperado: ${e.localizedMessage}", e)
+            ApiResult.UnknownError(e.localizedMessage)
+        }
+    }
+
+    /**
+     * Busca os detalhes completos de um filme usando o IMDb ID.
+     */
+    suspend fun getMovieDetails(imdbID: String): ApiResult<MovieItem> {
+        return try {
+            val response = api.getMovieDetails(BuildConfig.OMDB_API_KEY, imdbID)
+
+            if (!response.isSuccessful) {
+                Log.e("MovieDeck", "HTTP error ${response.code()} - ${response.message()}")
+                return ApiResult.HttpError(response.code(), response.message())
+            }
+
+            val body = response.body()
+            if (body == null) {
+                Log.e("MovieDeck", "Resposta vazia da API para detalhes de filme")
+                return ApiResult.UnknownError("Resposta vazia da API")
+            }
+
+            ApiResult.Success(body)
+        } catch (e: IOException) {
+            Log.e("MovieDeck", "Erro de rede ao buscar detalhes: ${e.localizedMessage}")
+            ApiResult.NetworkError
+        } catch (e: HttpException) {
+            Log.e("MovieDeck", "HttpException detalhes: ${e.code()} ${e.message()}")
+            ApiResult.HttpError(e.code(), e.message())
+        } catch (e: Exception) {
+            Log.e("MovieDeck", "Erro inesperado ao buscar detalhes: ${e.localizedMessage}", e)
             ApiResult.UnknownError(e.localizedMessage)
         }
     }

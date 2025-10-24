@@ -105,9 +105,9 @@ class MovieViewModel(private val repository: MovieRepository) : ViewModel() {
                         Log.e("MovieDeck", "Network error for '$query'")
                     }
                     is ApiResult.UnknownError -> {
-                        errorMessage = result.error ?: "Erro desconhecido. Tente novamente."
+                        errorMessage = result.message ?: "Erro desconhecido. Tente novamente."
                         movies = emptyList()
-                        Log.e("MovieDeck", "Unknown error: ${result.error} for '$query'")
+                        Log.e("MovieDeck", "Unknown error: ${result.message} for '$query'")
                     }
                 }
             } finally {

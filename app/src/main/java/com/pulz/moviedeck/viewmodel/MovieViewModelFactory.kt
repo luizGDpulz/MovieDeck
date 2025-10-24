@@ -13,6 +13,10 @@ class MovieViewModelFactory(
             @Suppress("UNCHECKED_CAST")
             return MovieViewModel(repository) as T
         }
-        throw IllegalArgumentException("Unknown ViewModel class")
+        if (modelClass.isAssignableFrom(MovieDetailViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return MovieDetailViewModel(repository) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
     }
 }

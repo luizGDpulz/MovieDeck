@@ -1,5 +1,6 @@
 package com.pulz.moviedeck.data.api
 
+import com.pulz.moviedeck.data.model.MovieItem
 import com.pulz.moviedeck.data.model.MovieResponse
 import retrofit2.Response
 import retrofit2.http.GET
@@ -22,4 +23,17 @@ interface OmdbApi {
         @Query("apikey") apiKey: String,
         @Query("s") searchQuery: String
     ): Response<MovieResponse>
+
+    /**
+     * Busca detalhes de um filme específico pelo IMDb ID.
+     *
+     * @param apiKey Chave da OMDb API.
+     * @param imdbID ID único do filme (ex: "tt0372784").
+     * @return Response contendo MovieItem (detalhes do filme).
+     */
+    @GET("/")
+    suspend fun getMovieDetails(
+        @Query("apikey") apiKey: String,
+        @Query("i") imdbID: String
+    ): Response<MovieItem>
 }
