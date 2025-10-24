@@ -6,7 +6,6 @@ import com.pulz.moviedeck.data.model.MovieResponse
 import retrofit2.HttpException
 import java.io.IOException
 
-
 class MovieRepository(private val api: OmdbApi) {
     /**
      * Faz a busca e mapeia os possíveis erros em ApiResult.
