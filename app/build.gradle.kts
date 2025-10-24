@@ -76,6 +76,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -101,6 +102,12 @@ dependencies {
 
     // 🖼️ Coil (carregar imagens de pôsteres)
     implementation("io.coil-kt:coil-compose:2.6.0")
+
+    // ícones "core" (pequeno conjunto comum)
+    implementation("androidx.compose.material:material-icons-core")
+
+    // ícones "extended" (conjunto completo, maior)
+    implementation("androidx.compose.material:material-icons-extended")
 
     // 🧠 Coroutines (para chamadas assíncronas)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
