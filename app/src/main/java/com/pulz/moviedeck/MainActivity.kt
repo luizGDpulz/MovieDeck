@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -19,6 +19,8 @@ import com.pulz.moviedeck.data.repository.MovieRepository
 import com.pulz.moviedeck.ui.theme.MovieDeckTheme
 import com.pulz.moviedeck.viewmodel.MovieViewModel
 import com.pulz.moviedeck.viewmodel.MovieViewModelFactory
+import androidx.compose.runtime.LaunchedEffect
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,10 +32,12 @@ class MainActivity : ComponentActivity() {
                 val factory = MovieViewModelFactory(repository)
                 val movieViewModel: MovieViewModel = viewModel(factory = factory)
 
-                val movies by movieViewModel.movies.collectAsState()
-                val error by movieViewModel.errorMessage.collectAsState()
+                // Lê propriedades diretamente (são mutableStateOf no ViewModel)
+                val movies = movieViewModel.movies
+                val error = movieViewModel.errorMessage
+                val isLoading = movieViewModel.isLoading
 
-                // Faz a chamada ao iniciar
+                // Faz a chamada ao iniciar (usar query padrão ou modifique)
                 LaunchedEffect(Unit) {
                     movieViewModel.searchMovies("star wars")
                 }
@@ -56,19 +60,21 @@ class MainActivity : ComponentActivity() {
                                 Column {
                                     Text("Erro: $error", color = MaterialTheme.colorScheme.error)
                                     Spacer(Modifier.height(8.dp))
-                                    Button(onClick = { movieViewModel.searchMovies("star wars") }) {
+                                    Button(onClick = { movieViewModel.searchMovies() }) {
                                         Text("Tentar novamente")
                                     }
                                 }
                             }
-                            movies.isEmpty() -> {
+                            isLoading -> {
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                     CircularProgressIndicator()
                                     Spacer(Modifier.height(8.dp))
                                     Text("Carregando filmes...")
                                 }
                             }
-                            else -> MovieList(movies)
+                            else -> {
+                                MovieList(movies)
+                            }
                         }
                     }
                 }
