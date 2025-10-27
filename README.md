@@ -1,4 +1,4 @@
-# MovieDeck
+# 🎬 MovieDeck
 
 **MovieDeck** — um app Android em **Kotlin + Jetpack Compose** para buscar filmes usando a **OMDb API**.
 Estilo “mini IMDb”: busca por título, lista de resultados e tela de detalhes com pôster e informações.
@@ -24,13 +24,6 @@ Um app simples, modular e didático para:
 * Tratamento de erros (network, HTTP, API response=false).
 * Estado reativo com `mutableStateOf` / `StateFlow` conforme apropriado.
 * Arquitetura limpa: `MovieRepository` → `ViewModel` → UI (Composables).
-
----
-
-# Screenshots / Telas (exemplo)
-
-* Tela Home: SearchBar + MovieList (título, ano)
-[homescreen]()
 
 ---
 
